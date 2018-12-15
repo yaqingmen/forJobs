@@ -11,27 +11,41 @@
 
 1. 注册驱动
 
-   	DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+```
+DriverManager.registerDriver(new com.mysql.jdbc.Driver());
+```
 
 2. 建立连接
 
+
+```
    	//DriverManager.getConnection("jdbc:mysql://localhost/test?user=monty&password=greatsqldb");
    		//2. 建立连接 参数一： 协议 + 访问的数据库 ， 参数二： 用户名 ， 参数三： 密码。
    		conn = DriverManager.getConnection("jdbc:mysql://localhost/student", "root", "root");
+```
 
 3. 创建statement
 
+
+```
    	//3. 创建statement ， 跟数据库打交道，一定需要这个对象
    	st = conn.createStatement();
+```
 
 4. 执行sql ，得到ResultSet
 
+
+```
    	//4. 执行查询 ， 得到结果集
    		String sql = "select * from t_stu";
    		rs = st.executeQuery(sql);
+```
+
 
 5. 遍历结果集
 
+
+```
    	//5. 遍历查询每一条记录
    		while(rs.next()){
    			int id = rs.getInt("id");
@@ -40,10 +54,14 @@
    			System.out.println("id="+id + "===name="+name+"==age="+age);
    				
    		}
+```
+
+
 
 6. 释放资源
 
 
+```
 		if (rs != null) {
 	        try {
 	            rs.close();
@@ -52,6 +70,9 @@
 	    }
 	
 		...
+```
+
+
 
 
 ### JDBC 工具类构建
@@ -62,6 +83,9 @@
 2. 驱动防二次注册
 
 
+
+
+```
    	DriverManager.registerDriver(new com.mysql.jdbc.Driver());
 
    	Driver 这个类里面有静态代码块，一上来就执行了，所以等同于我们注册了两次驱动。 其实没这个必要的。
@@ -71,9 +95,15 @@
 		最后形成以下代码即可。
 
 		Class.forName("com.mysql.jdbc.Driver");	
+```
+
+
 
 3. 使用properties配置文件
 
+
+
+```
    1. 在src底下声明一个文件 xxx.properties ，里面的内容吐下：
 
       	driverClass=com.mysql.jdbc.Driver
@@ -105,13 +135,19 @@
 				e.printStackTrace();
 			}
 		}
+```
+
 
 ​	
 
 ### 数据库的CRUD sql
 
+
+
 * insert
 
+
+```
   	INSERT INTO t_stu (NAME , age) VALUES ('wangqiang',28)
 
 
@@ -134,9 +170,14 @@
 			}else{
 				System.out.println("添加失败");
 			}
+```
+
 
 * delete
 
+
+
+```
   	DELETE FROM t_stu WHERE id = 6
 
 
@@ -155,9 +196,15 @@
 			}else{
 				System.out.println("删除失败");
 			}
+```
+
+
+
 
 * query
 
+
+```
   	SELECT * FROM t_stu
 
 
@@ -177,9 +224,13 @@
 	
 				System.out.println(name + "   " + age);
 			}
+```
+
 
 * update
 
+
+```
   	UPDATE t_stu SET age = 38 WHERE id = 1;
 
 
@@ -198,6 +249,8 @@
 			}else{
 				System.out.println("更新失败");
 			}
+```
+
 
 
 ### 使用单元测试，测试代码
@@ -225,6 +278,8 @@
 1. 新建一个dao的接口， 里面声明数据库访问规则
 
 
+
+```
 		/**
 		 * 定义操作数据库的方法
 		 */
@@ -235,11 +290,15 @@
 			 */
 			void findAll();
 		}
+```
+
 
 
 2. 新建一个dao的实现类，具体实现早前定义的规则
 
 
+
+```
 		public class UserDaoImpl implements UserDao{
 
 		@Override
@@ -270,20 +329,30 @@
 		}
 	
 	}
+```
+
+
 
 3. 直接使用实现
 
+
+```
    	@Test
    	public void testFindAll(){
    		UserDao dao = new UserDaoImpl();
    		dao.findAll();
    	}
+```
+
+
 
 ## Statement安全问题
 
 1. Statement执行 ，其实是拼接sql语句的。  先拼接sql语句，然后在一起执行。 
 
 
+
+```
 		String sql = "select * from t_user where username='"+ username  +"' and password='"+ password +"'";
 
 		UserDao dao = new UserDaoImpl();
@@ -293,6 +362,8 @@
 	
 		前面先拼接sql语句， 如果变量里面带有了 数据库的关键字，那么一并认为是关键字。 不认为是普通的字符串。 
 		rs = st.executeQuery(sql);
+```
+
 
 
 ## PrepareStatement
@@ -302,13 +373,15 @@
 1. 相比较以前的statement， 预先处理给定的sql语句，对其执行语法检查。 在sql语句里面使用 ? 占位符来替代后续要传递进来的变量。 后面进来的变量值，将会被看成是字符串，不会产生任何的关键字。
 
 
+
+```
 			String sql = "insert into t_user values(null , ? , ?)";
 			 ps = conn.prepareStatement(sql);
 			 
 			 //给占位符赋值 从左到右数过来，1 代表第一个问号， 永远从1开始。
 			 ps.setString(1, userName);
 			 ps.setString(2, password);
-
+```
 
 ​	
 
@@ -337,13 +410,26 @@
 
 
 		登录方法 ：
-
+	
 			要求，成功后返回该用户的所有信息。 字段不限。
-
+	
 		查询：
-
+	
 			如果是findAll. 肯定是返回一个集合  List<User>
-
+	
 		增加 & 删除 & 更新
-
+	
 			返回影响的行数即可  int类型
+## 关于作业：
+	1. 作业code 放在JDBD01文件夹的src
+		
+		登录：
+
+			创建一个Student类，保存数据库上表student的所有信息（id,usr,password,age,email）
+
+			返回值类型是Student
+		查询：
+		
+			findAll(),返回值类型ArrayList<Student>
+		
+			遍历数据库表student的每一条，添加进ArrayList
