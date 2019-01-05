@@ -34,6 +34,6 @@
 * 根据登录成功要做的三件事：
 
 
->  1.创建t_stus,	
-  2.获取所有的用户信息集合stus=findAll();
-  3.创建stu_list.jsp并使用EL+JSTL来遍历stus，输出到浏览器界面
+-  1.创建t_stus,	
+-  2.获取所有的用户信息集合stus=findAll();
+-  3.创建stu_list.jsp并使用EL+JSTL来遍历stus，输出到浏览器界面
